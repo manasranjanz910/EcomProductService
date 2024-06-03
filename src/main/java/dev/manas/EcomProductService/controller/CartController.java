@@ -25,5 +25,12 @@ public class CartController {
     {
         return ResponseEntity.ok(cartService.getById(cartId));
     }
+    @GetMapping("/total/{cart_id}")
+    public ResponseEntity<Double> getTotalSumOfAllProducts(@PathVariable("cart_id") UUID cart_id)
+    {
+        return ResponseEntity.ok(cartService.calTotalSumOfProducts(cart_id));
+    }
+
+
 
 }

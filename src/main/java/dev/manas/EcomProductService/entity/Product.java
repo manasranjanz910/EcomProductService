@@ -19,6 +19,6 @@ public class Product extends BaseModel{
     private String image ;
     private double rating;
     @ManyToOne()
-    @JoinColumn(name="product_id")
+    @JoinColumn(name="cart_id")
     private Cart cart;
 }

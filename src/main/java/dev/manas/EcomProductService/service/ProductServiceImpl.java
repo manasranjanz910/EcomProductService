@@ -2,12 +2,15 @@ package dev.manas.EcomProductService.service;
 
 import dev.manas.EcomProductService.dto.ProductRequestDto;
 import dev.manas.EcomProductService.dto.ProductResponseDto;
+import dev.manas.EcomProductService.entity.Cart;
 import dev.manas.EcomProductService.entity.Category;
 import dev.manas.EcomProductService.entity.Product;
+import dev.manas.EcomProductService.exception.CartNotFoundException;
 import dev.manas.EcomProductService.exception.CatagoryNotFoundException;
 import dev.manas.EcomProductService.exception.InvalidProductIdException;
 import dev.manas.EcomProductService.exception.ProductNotFoundException;
 import dev.manas.EcomProductService.mapper.ProductEntityDtoMapper;
+import dev.manas.EcomProductService.repository.CartRepository;
 import dev.manas.EcomProductService.repository.CategoryRepository;
 import dev.manas.EcomProductService.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +28,20 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private CategoryRepository catagoryRepository;
 
+    @Autowired
+    private CartRepository cartRepository;
+
     @Override
     public ProductResponseDto createProduct(ProductRequestDto productRequestDto) throws CatagoryNotFoundException {
         Product savedProduct = ProductEntityDtoMapper.convertProductRequestDtoToProduct(productRequestDto);
         Category savedCatagory = catagoryRepository.findById(productRequestDto.getCategoryId()).orElseThrow(
                 ()-> new CatagoryNotFoundException("Catagory Not Found For CatagoryId"+productRequestDto.getCategoryId())
         );
+        Cart savedCart = cartRepository.findById(productRequestDto.getCart_id()).orElseThrow(
+                ()->new CartNotFoundException("Cart Not Found For Id :"+productRequestDto.getCart_id())
+        );
         savedProduct.setCatagory(savedCatagory);
+        savedProduct.setCart(savedCart);
         savedProduct = productRepository.save(savedProduct);
         return ProductEntityDtoMapper.convertProductEntityToProductResponseDto(savedProduct);
     }

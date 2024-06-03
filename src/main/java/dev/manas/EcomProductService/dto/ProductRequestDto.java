@@ -14,5 +14,6 @@ public class ProductRequestDto {
     private String description;
     private String image ;
     private UUID categoryId;
+    private UUID cart_id;
 
 }

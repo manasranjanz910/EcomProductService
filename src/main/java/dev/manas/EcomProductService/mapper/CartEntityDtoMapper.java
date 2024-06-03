@@ -22,8 +22,8 @@ public class CartEntityDtoMapper {
             for (Product product : cart.getProducts()) {
                 productResponseDtos.add(ProductEntityDtoMapper.convertProductEntityToProductResponseDto(product));
             }
+            cartResponseDto.setProducts(productResponseDtos);
         }
-        cartResponseDto.setProducts(productResponseDtos);
         return cartResponseDto;
 
     }
@@ -31,6 +31,7 @@ public class CartEntityDtoMapper {
     {
         Cart cart = new Cart();
         cart.setCartName(cartRequestDto.getCartName());
+
         return cart;
     }
 }
