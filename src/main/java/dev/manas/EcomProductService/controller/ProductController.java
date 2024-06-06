@@ -29,7 +29,7 @@ public class ProductController {
         return ResponseEntity.ok(productService.createProduct(productRequestDto));
     }
     @GetMapping("/{productId}")
-    public ResponseEntity<ProductResponseDto> getProductByID (@PathVariable("id") UUID productId)throws ProductNotFoundException
+    public ResponseEntity<ProductResponseDto> getProductByID (@PathVariable("id") UUID productId )throws ProductNotFoundException
     {
         if (productId == null)
         {

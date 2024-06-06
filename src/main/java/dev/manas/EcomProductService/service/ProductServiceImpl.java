@@ -1,5 +1,6 @@
 package dev.manas.EcomProductService.service;
 
+import dev.manas.EcomProductService.client.UserAuthClient;
 import dev.manas.EcomProductService.dto.ProductRequestDto;
 import dev.manas.EcomProductService.dto.ProductResponseDto;
 import dev.manas.EcomProductService.entity.Cart;
@@ -30,6 +31,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private CartRepository cartRepository;
+
+    @Autowired
+    private UserAuthClient userAuthClient;
 
     @Override
     public ProductResponseDto createProduct(ProductRequestDto productRequestDto) throws CatagoryNotFoundException {
