@@ -1,6 +1,5 @@
 package dev.manas.EcomProductService.service;
 
-import dev.manas.EcomProductService.client.UserAuthClient;
 import dev.manas.EcomProductService.dto.ProductRequestDto;
 import dev.manas.EcomProductService.dto.ProductResponseDto;
 import dev.manas.EcomProductService.entity.Cart;
@@ -32,22 +31,20 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private CartRepository cartRepository;
 
-    @Autowired
-    private UserAuthClient userAuthClient;
-
     @Override
     public ProductResponseDto createProduct(ProductRequestDto productRequestDto) throws CatagoryNotFoundException {
-        Product savedProduct = ProductEntityDtoMapper.convertProductRequestDtoToProduct(productRequestDto);
-        Category savedCatagory = catagoryRepository.findById(productRequestDto.getCategoryId()).orElseThrow(
-                ()-> new CatagoryNotFoundException("Catagory Not Found For CatagoryId"+productRequestDto.getCategoryId())
-        );
-        Cart savedCart = cartRepository.findById(productRequestDto.getCart_id()).orElseThrow(
-                ()->new CartNotFoundException("Cart Not Found For Id :"+productRequestDto.getCart_id())
-        );
-        savedProduct.setCatagory(savedCatagory);
-        savedProduct.setCart(savedCart);
-        savedProduct = productRepository.save(savedProduct);
-        return ProductEntityDtoMapper.convertProductEntityToProductResponseDto(savedProduct);
+
+            Product savedProduct = ProductEntityDtoMapper.convertProductRequestDtoToProduct(productRequestDto);
+            Category savedCatagory = catagoryRepository.findById(productRequestDto.getCategoryId()).orElseThrow(
+                    () -> new CatagoryNotFoundException("Catagory Not Found For CatagoryId" + productRequestDto.getCategoryId())
+            );
+            Cart savedCart = cartRepository.findById(productRequestDto.getCart_id()).orElseThrow(
+                    () -> new CartNotFoundException("Cart Not Found For Id :" + productRequestDto.getCart_id())
+            );
+            savedProduct.setCatagory(savedCatagory);
+            savedProduct.setCart(savedCart);
+            savedProduct = productRepository.save(savedProduct);
+            return ProductEntityDtoMapper.convertProductEntityToProductResponseDto(savedProduct);
     }
 
     @Override
