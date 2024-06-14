@@ -5,15 +5,13 @@ import dev.manas.EcomProductService.dto.ProductResponseDto;
 import dev.manas.EcomProductService.entity.Cart;
 import dev.manas.EcomProductService.entity.Category;
 import dev.manas.EcomProductService.entity.Product;
-import dev.manas.EcomProductService.exception.CartNotFoundException;
-import dev.manas.EcomProductService.exception.CatagoryNotFoundException;
-import dev.manas.EcomProductService.exception.InvalidProductIdException;
-import dev.manas.EcomProductService.exception.ProductNotFoundException;
+import dev.manas.EcomProductService.exception.*;
 import dev.manas.EcomProductService.mapper.ProductEntityDtoMapper;
 import dev.manas.EcomProductService.repository.CartRepository;
 import dev.manas.EcomProductService.repository.CategoryRepository;
 import dev.manas.EcomProductService.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,22 +29,33 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private CartRepository cartRepository;
 
+
     @Override
     public ProductResponseDto createProduct(ProductRequestDto productRequestDto) throws CatagoryNotFoundException {
 
-            Product savedProduct = ProductEntityDtoMapper.convertProductRequestDtoToProduct(productRequestDto);
-            Category savedCatagory = catagoryRepository.findById(productRequestDto.getCategoryId()).orElseThrow(
-                    () -> new CatagoryNotFoundException("Catagory Not Found For CatagoryId" + productRequestDto.getCategoryId())
+
+            // Find the category, throw exception if not found
+            Category savedCategory = catagoryRepository.findById(productRequestDto.getCategoryId()).orElseThrow(
+                    () -> new CatagoryNotFoundException("Category Not Found For CategoryId: " + productRequestDto.getCategoryId())
             );
+
+            // Find the cart, throw exception if not found
             Cart savedCart = cartRepository.findById(productRequestDto.getCart_id()).orElseThrow(
-                    () -> new CartNotFoundException("Cart Not Found For Id :" + productRequestDto.getCart_id())
+                    () -> new CartNotFoundException("Cart Not Found For Id: " + productRequestDto.getCart_id())
             );
-            savedProduct.setCatagory(savedCatagory);
+
+            // Convert and save the product
+            Product savedProduct = ProductEntityDtoMapper.convertProductRequestDtoToProduct(productRequestDto);
+            savedProduct.setCatagory(savedCategory);
             savedProduct.setCart(savedCart);
             savedProduct = productRepository.save(savedProduct);
+
+            // Convert and return the response DTO
             return ProductEntityDtoMapper.convertProductEntityToProductResponseDto(savedProduct);
+
     }
 
+    @Cacheable(value = "products")
     @Override
     public List<ProductResponseDto> getAllProducts() {
         List<Product>savedProducts = productRepository.findAll();
@@ -58,7 +67,7 @@ public class ProductServiceImpl implements ProductService {
         }
         return products;
     }
-
+    @Cacheable(value = "product",key = "#productId")
     @Override
     public ProductResponseDto getProductById(UUID productId) throws InvalidProductIdException {
         Product savedProduct = productRepository.findById(productId).orElseThrow(

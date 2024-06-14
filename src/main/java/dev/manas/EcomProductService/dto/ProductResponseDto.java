@@ -3,11 +3,12 @@ package dev.manas.EcomProductService.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 @Getter
 @Setter
-public class ProductResponseDto {
+public class ProductResponseDto implements Serializable {
     private UUID productId;
     private String title;
     private double price;

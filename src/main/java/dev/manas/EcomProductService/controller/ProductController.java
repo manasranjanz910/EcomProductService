@@ -11,6 +11,7 @@ import dev.manas.EcomProductService.mapper.ProductEntityDtoMapper;
 import dev.manas.EcomProductService.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,12 +25,12 @@ public class ProductController {
     private ProductService productService;
 
     @PostMapping()
-    public ResponseEntity<ProductResponseDto> createProduct (@RequestBody ProductRequestDto productRequestDto)throws CatagoryNotFoundException
+    public ResponseEntity<ProductResponseDto> createProduct ( @RequestBody ProductRequestDto productRequestDto)throws CatagoryNotFoundException
     {
         return ResponseEntity.ok(productService.createProduct(productRequestDto));
     }
     @GetMapping("/{productId}")
-    public ResponseEntity<ProductResponseDto> getProductByID (@PathVariable("id") UUID productId )throws ProductNotFoundException
+    public ResponseEntity<ProductResponseDto> getProductByID (@PathVariable("productId") UUID productId )throws ProductNotFoundException
     {
         if (productId == null)
         {
